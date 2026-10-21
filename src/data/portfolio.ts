@@ -71,7 +71,7 @@ export const featuredProjects = [
     tech: ["Next.js", "TypeScript", "Express", "Prisma", "PostgreSQL", "Redis", "BullMQ", "Docker"],
     github: "https://github.com/Gaurav06120714/CodeVault",
     external: null,
-    image: null,
+    image: "/projects/codevault.png",
   },
   {
     id: 2,
@@ -81,8 +81,8 @@ export const featuredProjects = [
       "Offline, end-to-end encrypted, store-and-forward messenger over Bluetooth LE — no internet or servers needed. Rust core (151 tests, including a malicious-relay security suite) bridged to a Flutter app through UniFFI + Pigeon native hosts. 1:1 and small-group chat, attachments, QR / 32-char ID pairing, key refresh on re-pair, panic wipe, app lock and an Android relay mode. End-to-end tests pass on the iOS simulator and Android emulator; testing on real BLE devices is still to come.",
     tech: ["Rust", "Flutter", "Dart", "Swift", "Kotlin", "UniFFI", "BLE", "E2EE"],
     github: "https://github.com/Gaurav06120714/vyrolink",
-    external: null,
-    image: null,
+    external: "https://vyrolink.netlify.app",
+    image: "/projects/vyrolink.png",
   },
   {
     id: 3,
@@ -91,9 +91,9 @@ export const featuredProjects = [
     description:
       "A from-scratch x86_64 microkernel OS in C + Assembly with a GUI, a framebuffer driver and a networking stack (TCP, DNS). It has a hand-written TLS 1.3 client — X25519, ChaCha20-Poly1305 and AES-128-GCM, all checked against RFC/NIST test vectors at boot — so its built-in browser loads real HTTPS pages. Runs in QEMU.",
     tech: ["C", "x86 Assembly", "NASM", "GCC cross-toolchain", "QEMU"],
-    github: null,
+    github: "https://github.com/Gaurav06120714/VyroOS",
     external: null,
-    image: null,
+    image: "/projects/vyroos.png",
   },
 ];
 
