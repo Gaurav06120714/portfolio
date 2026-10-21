@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 const TO_EMAIL = "gauravganeshteegulla@gmail.com";
 const FROM_EMAIL = "onboarding@resend.dev"; // Use this until you verify a domain
 
 export async function POST(req: NextRequest) {
+  // Created per request so the build doesn't crash when RESEND_API_KEY is unset.
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: "Email service is not configured." }, { status: 500 });
+  }
+  const resend = new Resend(process.env.RESEND_API_KEY);
   try {
     const { name, email, message } = await req.json();
 

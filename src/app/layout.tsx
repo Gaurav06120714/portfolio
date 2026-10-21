@@ -16,14 +16,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gaurav Ganesh Teegulla | Full-Stack Developer & AI/ML Engineer",
+  title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
   description:
-    "Portfolio of Gaurav Ganesh Teegulla — Computer Science undergraduate at SNIST, Hyderabad. Full-Stack Developer and AI/ML Engineer specializing in React, Node.js, Python, and Machine Learning.",
+    "Portfolio of Gaurav Ganesh Teegulla — Computer Science undergraduate at SNIST, Hyderabad. Full-stack & systems engineer working across TypeScript web platforms, Rust + Flutter mobile, systems programming (OS, TLS, E2EE) and AI pipelines.",
   keywords: [
     "Gaurav Ganesh Teegulla",
     "Full Stack Developer",
     "AI ML Engineer",
-    "React Developer",
+    "Systems Engineer",
+    "Rust Developer",
     "Python Developer",
     "Portfolio",
     "SNIST",
@@ -32,9 +33,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Gaurav Ganesh Teegulla" }],
   creator: "Gaurav Ganesh Teegulla",
   openGraph: {
-    title: "Gaurav Ganesh Teegulla | Full-Stack Developer & AI/ML Engineer",
+    title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
     description:
-      "Computer Science undergraduate building full-stack apps, AI systems, and low-level software. Check out VyroOS, VyroBrowser, and more.",
+      "Computer Science undergraduate building full-stack apps, AI systems, and low-level software. Check out VyroOS, VYRO LINK, CodeVault and more.",
     url: "https://gauravganesh.dev",
     siteName: "Gaurav Ganesh Portfolio",
     locale: "en_US",
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gaurav Ganesh Teegulla | Full-Stack Developer & AI/ML Engineer",
+    title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
     description: "Computer Science undergraduate building full-stack apps, AI systems, and low-level software.",
   },
   robots: {

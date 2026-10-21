@@ -61,8 +61,9 @@ export default function Hero() {
         >
           I&apos;m a Computer Science undergraduate specializing in{" "}
           <span className="text-violet-400 font-medium">Data Science</span> — passionate about building
-          full-stack applications, AI/ML systems, and low-level software. From custom operating systems
-          to real-time multiplayer platforms, I turn ambitious ideas into working products.
+          full-stack platforms, Rust + Flutter mobile apps, systems software and AI pipelines. From an OS
+          with its own TLS stack to an offline encrypted Bluetooth messenger, I turn ambitious ideas into
+          working products.
         </motion.p>
 
         <motion.div

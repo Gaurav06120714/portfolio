@@ -9,8 +9,9 @@ const categoryMeta: Record<string, { icon: string; gradient: string; border: str
   "Frontend":       { icon: "🎨", gradient: "from-pink-500/10 to-rose-500/5",       border: "border-pink-500/20"   },
   "Backend":        { icon: "⚙️", gradient: "from-green-500/10 to-emerald-500/5",   border: "border-green-500/20"  },
   "AI / ML":        { icon: "🤖", gradient: "from-orange-500/10 to-amber-500/5",    border: "border-orange-500/20" },
-  "Databases":      { icon: "🗄️", gradient: "from-cyan-500/10 to-teal-500/5",       border: "border-cyan-500/20"   },
-  "Tools & DevOps": { icon: "🛠️", gradient: "from-violet-500/10 to-purple-500/5",  border: "border-violet-500/20" },
+  "Data":           { icon: "🗄️", gradient: "from-cyan-500/10 to-teal-500/5",       border: "border-cyan-500/20"   },
+  "Systems & Mobile": { icon: "🔩", gradient: "from-lime-500/10 to-green-500/5",     border: "border-lime-500/20"   },
+  "DevOps":         { icon: "🛠️", gradient: "from-violet-500/10 to-purple-500/5",  border: "border-violet-500/20" },
 };
 
 const tagColors: Record<string, string> = {
@@ -18,8 +19,9 @@ const tagColors: Record<string, string> = {
   "Frontend":       "bg-pink-500/10   text-pink-300   border-pink-500/20",
   "Backend":        "bg-green-500/10  text-green-300  border-green-500/20",
   "AI / ML":        "bg-orange-500/10 text-orange-300 border-orange-500/20",
-  "Databases":      "bg-cyan-500/10   text-cyan-300   border-cyan-500/20",
-  "Tools & DevOps": "bg-violet-500/10 text-violet-300 border-violet-500/20",
+  "Data":           "bg-cyan-500/10   text-cyan-300   border-cyan-500/20",
+  "Systems & Mobile": "bg-lime-500/10 text-lime-300   border-lime-500/20",
+  "DevOps":         "bg-violet-500/10 text-violet-300 border-violet-500/20",
 };
 
 export default function Skills() {

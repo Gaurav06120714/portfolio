@@ -73,7 +73,7 @@ export default function Loader({ isLoading }: Props) {
             transition={{ delay: 1.2, duration: 0.4 }}
             className="font-mono text-[var(--text-muted)] text-xs mt-4 tracking-widest"
           >
-            Full-Stack Developer & AI/ML Engineer
+            Full-Stack & Systems Engineer · AI/ML
           </motion.p>
         </motion.div>
       )}

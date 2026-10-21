@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, Menu, X, Download } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -19,10 +19,10 @@ export default function Nav() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  // true on the client, false during SSR — avoids a theme-icon hydration mismatch
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     const handleScroll = () => {
       const y = window.scrollY;
       setScrolled(y > 50);

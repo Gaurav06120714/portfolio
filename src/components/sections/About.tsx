@@ -6,10 +6,10 @@ import AnimatedSection from "@/components/ui/AnimatedSection";
 import { personalInfo } from "@/data/portfolio";
 
 const techStack = [
-  "Python", "TypeScript / JavaScript",
-  "React 18 + Vite", "Node.js + Socket.io",
-  "FastAPI / Flask", "PostgreSQL / SQLite",
-  "Machine Learning / OpenCV", "C / C++ / Assembly",
+  "TypeScript / Next.js 16", "Node.js + Express 5",
+  "Rust + Flutter (UniFFI)", "Swift / SwiftUI",
+  "PostgreSQL / Redis / BullMQ", "Python / FastAPI",
+  "Ollama / Whisper / OpenCV", "C / x86 Assembly",
 ];
 
 export default function About() {
