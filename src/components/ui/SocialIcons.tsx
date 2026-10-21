@@ -1,3 +1,4 @@
+import type { SocialIcon as SocialIconName } from "@/data/portfolio";
 // Inline SVG social brand icons (lucide removed brand icons in v1+)
 export function GithubIcon({ size = 20 }: { size?: number }) {
   return (
@@ -37,4 +38,18 @@ export function HackerRankIcon({ size = 20 }: { size?: number }) {
       <path d="M12 0c1.285 0 9.75 4.886 10.392 6 .645 1.115.645 10.885 0 12S13.287 24 12 24C10.714 24 2.25 19.114 1.608 18 .964 16.886.964 7.116 1.608 6 2.25 4.886 10.715 0 12 0zm2.295 6.799c-.141 0-.258.115-.258.258v3.875H9.963V6.799c0-.141-.115-.258-.258-.258H8.05a.258.258 0 00-.258.258v10.403c0 .141.115.258.258.258h1.655c.142 0 .258-.117.258-.258v-4.109h4.074v4.109c0 .141.116.258.258.258h1.654c.142 0 .258-.117.258-.258V6.799c0-.141-.116-.258-.258-.258h-1.654z" />
     </svg>
   );
+}
+
+
+const icons: Record<SocialIconName, (p: { size?: number }) => React.JSX.Element> = {
+  github: GithubIcon,
+  linkedin: LinkedInIcon,
+  leetcode: LeetCodeIcon,
+  hackerrank: HackerRankIcon,
+  instagram: InstagramIcon,
+};
+
+export function SocialIcon({ name, size = 18 }: { name: SocialIconName; size?: number }) {
+  const Icon = icons[name];
+  return <Icon size={size} />;
 }

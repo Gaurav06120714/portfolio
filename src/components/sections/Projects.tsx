@@ -1,192 +1,133 @@
-"use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Folder } from "lucide-react";
 import Image from "next/image";
-import { GithubIcon } from "@/components/ui/SocialIcons";
+import { ArrowUpRight } from "lucide-react";
+import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import AnimatedSection from "@/components/ui/AnimatedSection";
-import { featuredProjects, otherProjects } from "@/data/portfolio";
+import Reveal from "@/components/ui/AnimatedSection";
+import { GithubIcon } from "@/components/ui/SocialIcons";
+import OtherProjectsGrid from "@/components/sections/OtherProjectsGrid";
+import { featuredProjects, otherProjects, type FeaturedProject } from "@/data/portfolio";
 
-export default function Projects() {
-  const [showAll, setShowAll] = useState(false);
-  const displayed = showAll ? otherProjects : otherProjects.slice(0, 6);
-
+function TechList({ items }: { items: string[] }) {
   return (
-    <AnimatedSection id="projects" className="py-28 px-6 max-w-6xl mx-auto">
-      <SectionHeading number="04" title="Some Things I've Built" />
+    <ul className="flex flex-wrap gap-2" aria-label="Technologies">
+      {items.map((t) => (
+        <li key={t} className="border border-neutral-300 px-2.5 py-1 font-mono text-xs text-neutral-700">
+          {t}
+        </li>
+      ))}
+    </ul>
+  );
+}
 
-      {/* ── Featured projects ── */}
-      <div className="space-y-32 mb-32">
-        {featuredProjects.map((project, i) => {
-          const isEven = i % 2 === 0;
-          return (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative grid lg:grid-cols-12 gap-4 items-center"
-            >
-              {/* Screenshot */}
-              <div
-                className={`lg:col-span-7 lg:row-start-1 ${
-                  isEven ? "lg:col-start-1" : "lg:col-start-6"
-                }`}
-              >
-                <a
-                  href={project.github ?? "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block relative rounded-2xl overflow-hidden border border-[var(--border)] hover:border-violet-500/50 transition-all duration-300 shadow-2xl shadow-black/40"
-                >
-                  {project.image ? (
-                    <>
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        width={1440}
-                        height={900}
-                        className="w-full h-auto object-cover object-top transition-transform duration-500 group-hover:scale-[1.02]"
-                        priority={i === 0}
-                      />
-                      {/* Violet tint overlay — removes on hover like reference site */}
-                      <div className="absolute inset-0 bg-violet-900/40 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-300 pointer-events-none rounded-2xl" />
-                    </>
-                  ) : (
-                    <div className="aspect-video bg-gradient-to-br from-violet-900/20 to-slate-900/40 flex items-center justify-center">
-                      <span className="text-6xl font-bold font-mono text-violet-500/20">
-                        {project.title.substring(0, 2).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </a>
-              </div>
+function ProjectLinks({ project }: { project: FeaturedProject }) {
+  if (!project.github && !project.links?.length) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      {project.github && (
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 text-sm font-medium"
+          aria-label={`${project.title} source code on GitHub`}
+        >
+          <GithubIcon size={16} />
+          <span className="link">Source</span>
+        </a>
+      )}
+      {project.links?.map((l) => (
+        <a
+          key={l.url}
+          href={l.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-medium"
+          aria-label={`${project.title} — ${l.label}`}
+        >
+          <span className="link">{l.label}</span>
+          <ArrowUpRight size={15} aria-hidden="true" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
-              {/* Content card — overlaps screenshot */}
-              <div
-                className={`lg:col-span-6 lg:row-start-1 z-10 ${
-                  isEven
-                    ? "lg:col-start-7 lg:text-right"
-                    : "lg:col-start-1 lg:text-left"
-                }`}
-              >
-                <p className="font-mono text-xs text-violet-400 mb-2 tracking-[0.2em] uppercase">
-                  {project.overline}
-                </p>
+function FeaturedRow({ project, index }: { project: FeaturedProject; index: number }) {
+  const hasImage = Boolean(project.image);
+  return (
+    <article className="grid gap-8 border-t border-neutral-200 py-12 md:py-16 lg:grid-cols-12 lg:gap-12">
+      <div className={hasImage ? "lg:col-span-6" : "lg:col-span-8"}>
+        <div className="mb-5 flex flex-wrap items-center gap-3">
+          <span className="font-mono text-xs text-neutral-500">{String(index + 1).padStart(2, "0")}</span>
+          {project.status && (
+            <span className="border border-black px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.12em]">
+              {project.status}
+            </span>
+          )}
+        </div>
+        <h3 className="text-2xl font-semibold tracking-tight md:text-4xl">{project.title}</h3>
+        <p className="mt-2 text-base font-medium text-neutral-500 md:text-lg">{project.summary}</p>
+        <p className="mt-5 max-w-2xl leading-relaxed text-neutral-700">{project.description}</p>
 
-                <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-5">
-                  {project.github ? (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-violet-400 transition-colors"
-                    >
-                      {project.title}
-                    </a>
-                  ) : (
-                    project.title
-                  )}
-                </h3>
+        {project.highlights && (
+          <ul className="mt-5 max-w-2xl space-y-2">
+            {project.highlights.map((h) => (
+              <li key={h} className="flex gap-3 text-sm leading-relaxed text-neutral-700">
+                <span aria-hidden="true" className="mt-2 h-px w-3 shrink-0 bg-black" />
+                {h}
+              </li>
+            ))}
+          </ul>
+        )}
 
-                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl p-5 md:p-6 shadow-xl shadow-black/30 mb-5 hover:border-violet-500/30 transition-colors">
-                  <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
-                    {project.description}
-                  </p>
-                </div>
-
-                <ul className={`flex flex-wrap gap-x-4 gap-y-1 mb-5 ${isEven ? "lg:justify-end" : "justify-start"}`}>
-                  {project.tech.map((t) => (
-                    <li key={t} className="font-mono text-xs text-[var(--text-muted)]">{t}</li>
-                  ))}
-                </ul>
-
-                <div className={`flex gap-4 ${isEven ? "lg:justify-end" : "justify-start"}`}>
-                  {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-                      className="text-[var(--text-secondary)] hover:text-violet-400 hover:-translate-y-0.5 transition-all duration-200">
-                      <GithubIcon size={20} />
-                    </a>
-                  )}
-                  {project.external && (
-                    <a href={project.external} target="_blank" rel="noopener noreferrer" aria-label="Live Demo"
-                      className="text-[var(--text-secondary)] hover:text-violet-400 hover:-translate-y-0.5 transition-all duration-200">
-                      <ExternalLink size={20} strokeWidth={1.5} />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+        <div className="mt-6">
+          <TechList items={project.tech} />
+        </div>
+        <div className="mt-6">
+          <ProjectLinks project={project} />
+        </div>
       </div>
 
-      {/* ── Other projects ── */}
-      <div className="text-center mb-10">
-        <p className="font-mono text-xs text-violet-400 tracking-[0.2em] uppercase mb-3">Other Noteworthy Projects</p>
-        <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)]">More Things I&apos;ve Built</h3>
-      </div>
-
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AnimatePresence>
-          {displayed.map((project, i) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: (i % 3) * 0.07, duration: 0.4 }}
-              className="group bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 flex flex-col hover:border-violet-500/50 hover:shadow-xl hover:shadow-violet-500/5 hover:-translate-y-2 transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <Folder size={36} strokeWidth={1} className="text-violet-400 group-hover:text-violet-300 transition-colors" />
-                <div className="flex gap-3">
-                  {project.github && (
-                    <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-                      className="text-[var(--text-muted)] hover:text-violet-400 transition-colors" onClick={(e) => e.stopPropagation()}>
-                      <GithubIcon size={18} />
-                    </a>
-                  )}
-                  {project.external && (
-                    <a href={project.external} target="_blank" rel="noopener noreferrer" aria-label="Live Demo"
-                      className="text-[var(--text-muted)] hover:text-violet-400 transition-colors" onClick={(e) => e.stopPropagation()}>
-                      <ExternalLink size={18} strokeWidth={1.5} />
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              <h4 className="text-base font-semibold text-[var(--text-primary)] mb-2 group-hover:text-violet-400 transition-colors">
-                {project.title}
-              </h4>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-6 flex-1">
-                {project.description}
-              </p>
-
-              <ul className="flex flex-wrap gap-1.5">
-                {project.tech.map((t) => (
-                  <li key={t} className="font-mono text-[10px] text-[var(--text-muted)] bg-violet-500/5 border border-violet-500/10 px-2 py-0.5 rounded-md">
-                    {t}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
-
-      {otherProjects.length > 6 && (
-        <div className="text-center mt-10">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="px-6 py-3 font-mono text-sm text-violet-400 border border-violet-400 rounded-lg hover:bg-violet-400/10 transition-all duration-200"
-          >
-            {showAll ? "Show Less" : "Show More"}
-          </button>
+      {hasImage && (
+        <div className="lg:col-span-6">
+          <div className="overflow-hidden border border-neutral-200 bg-neutral-100">
+            <Image
+              src={project.image!}
+              alt={project.imageAlt ?? `${project.title} screenshot`}
+              width={1440}
+              height={900}
+              sizes="(min-width: 1024px) 560px, 100vw"
+              className="h-auto w-full grayscale"
+            />
+          </div>
         </div>
       )}
-    </AnimatedSection>
+    </article>
+  );
+}
+
+export default function Projects() {
+  return (
+    <Section id="projects" labelledBy="projects-title" className="border-t border-neutral-200">
+      <SectionHeading
+        eyebrow="02 — Work"
+        title="Featured projects"
+        id="projects-title"
+        intro="A selection of things I’ve built or am building. Status labels are honest — where something is still in development, it says so."
+      />
+
+      <div className="border-b border-neutral-200">
+        {featuredProjects.map((p, i) => (
+          <Reveal key={p.title}>
+            <FeaturedRow project={p} index={i} />
+          </Reveal>
+        ))}
+      </div>
+
+      <div className="mt-24">
+        <h3 className="mb-8 text-xl font-semibold tracking-tight md:text-2xl">Other projects</h3>
+        <OtherProjectsGrid projects={otherProjects} />
+      </div>
+    </Section>
   );
 }

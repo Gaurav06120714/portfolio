@@ -2,74 +2,69 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/layout/Providers";
+import { personalInfo, siteUrl, socialLinks } from "@/data/portfolio";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+const title = `${personalInfo.name} — ${personalInfo.roles[0]}`;
+const description =
+  "Portfolio of Gaurav Ganesh Teegulla, a Computer Science and Engineering (Data Science) student building software products, AI-powered applications and practical technology solutions.";
 
 export const metadata: Metadata = {
-  title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
-  description:
-    "Portfolio of Gaurav Ganesh Teegulla — Computer Science undergraduate at SNIST, Hyderabad. Full-stack & systems engineer working across TypeScript web platforms, Rust + Flutter mobile, systems programming (OS, TLS, E2EE) and AI pipelines.",
+  metadataBase: new URL(siteUrl),
+  title: { default: title, template: `%s — ${personalInfo.name}` },
+  description,
   keywords: [
     "Gaurav Ganesh Teegulla",
-    "Full Stack Developer",
-    "AI ML Engineer",
-    "Systems Engineer",
-    "Rust Developer",
-    "Python Developer",
+    "Software Developer",
+    "Data Science Student",
+    "Product Builder",
     "Portfolio",
     "SNIST",
     "Hyderabad",
   ],
-  authors: [{ name: "Gaurav Ganesh Teegulla" }],
-  creator: "Gaurav Ganesh Teegulla",
+  authors: [{ name: personalInfo.name, url: personalInfo.github }],
+  creator: personalInfo.name,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
-    description:
-      "Computer Science undergraduate building full-stack apps, AI systems, and low-level software. Check out VyroOS, VYRO LINK, CodeVault and more.",
-    url: "https://gauravganesh.dev",
-    siteName: "Gaurav Ganesh Portfolio",
+    title,
+    description,
+    url: "/",
+    siteName: personalInfo.name,
     locale: "en_US",
-    type: "website",
+    type: "profile",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "Gaurav Ganesh Teegulla | Full-Stack & Systems Engineer · AI/ML",
-    description: "Computer Science undergraduate building full-stack apps, AI systems, and low-level software.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large" },
-  },
+  twitter: { card: "summary_large_image", title, description },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0d0d1a" },
-    { media: "(prefers-color-scheme: light)", color: "#f8f8ff" },
-  ],
+  themeColor: "#ffffff",
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: personalInfo.name,
+  jobTitle: personalInfo.roles[0],
+  url: siteUrl,
+  email: `mailto:${personalInfo.email}`,
+  address: { "@type": "PostalAddress", addressLocality: "Hyderabad", addressCountry: "IN" },
+  alumniOf: "Sreenidhi Institute of Science and Technology",
+  sameAs: socialLinks.map((s) => s.url),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-screen bg-mesh">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="min-h-screen bg-white text-black">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>

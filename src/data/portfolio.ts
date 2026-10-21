@@ -1,219 +1,276 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// All portfolio content lives here. Edit this file to update the site —
+// components only read from it. Keep claims factual: if something isn't
+// finished or tested on real hardware, say so in the text.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type SocialIcon = "github" | "linkedin" | "leetcode" | "hackerrank" | "instagram";
+
+export interface SocialLink {
+  name: string;
+  url: string;
+  icon: SocialIcon;
+  handle?: string;
+}
+
+export interface ProjectLink {
+  label: string;
+  url: string;
+}
+
+export interface FeaturedProject {
+  title: string;
+  /** One-line summary shown under the title. */
+  summary: string;
+  /** Longer, factual description. */
+  description: string;
+  /** Short factual points. Omit rather than guess. */
+  highlights?: string[];
+  tech: string[];
+  /** e.g. "In development". Leave undefined when unknown. */
+  status?: string;
+  github?: string;
+  links?: ProjectLink[];
+  /** Path under /public. Leave undefined when there is no real screenshot. */
+  image?: string;
+  imageAlt?: string;
+}
+
+export interface OtherProject {
+  title: string;
+  description: string;
+  tech: string[];
+  status?: string;
+  github?: string;
+  external?: string;
+}
+
+export interface Experience {
+  company: string;
+  title: string;
+  url?: string;
+  duration: string;
+  bullets: string[];
+}
+
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://gauravganeshportfolio.netlify.app";
+
 export const personalInfo = {
   name: "Gaurav Ganesh Teegulla",
-  title: "Full-Stack & Systems Engineer · AI/ML",
+  shortName: "Gaurav Teegulla",
+  title: "Software Developer | Data Science Student | Product Builder",
+  roles: ["Software Developer", "Data Science Student", "Product Builder"],
+  intro:
+    "I’m a Computer Science student specializing in Data Science, passionate about building software products, AI-powered applications, and practical technology solutions.",
   email: "gauravganeshteegulla@gmail.com",
   phone: "+91 9515081562",
   location: "Hyderabad, India",
-  tagline: "I build things that matter.",
+  github: "https://github.com/Gaurav06120714",
   bio: [
-    "Hello! I'm Gaurav — a Computer Science undergraduate specializing in Data Science at Sreenidhi Institute of Science and Technology, Hyderabad. I like owning a product end to end: from the database and the API down to the bytes on the wire.",
-    "On the web I build full-stack TypeScript platforms (Next.js, Express, Prisma, PostgreSQL, Redis, BullMQ). On mobile I pair a Rust core with Flutter through UniFFI, and on macOS I write native Swift utilities against the Accessibility APIs.",
-    "I'm drawn to systems work — a from-scratch x86_64 OS with its own TLS 1.3 stack, and an end-to-end encrypted Bluetooth messenger — and to practical AI pipelines: local LLMs with Ollama, Whisper speech-to-text, intent classification with slot-filling, and face embeddings.",
+    "I’m a B.Tech student in Computer Science and Engineering (Data Science) at Sreenidhi Institute of Science and Technology, Hyderabad.",
+    "I like taking an idea all the way to something people can use — desktop apps, mobile apps, web platforms and machine-learning projects. Recently that has meant an Electron browser with a local AI assistant, an offline Bluetooth messenger with a Rust core, and ML projects built around real sensor data.",
+    "I care about building things that work, explaining honestly what is finished and what isn’t, and learning whatever a project needs along the way.",
   ],
   resumePath: "/resume.pdf",
+  availability: "Open to internships, full-time roles and freelance projects.",
 };
 
-export const socialLinks = [
-  { name: "GitHub", url: "https://github.com/Gaurav06120714", icon: "github" },
+export const socialLinks: SocialLink[] = [
+  { name: "GitHub", url: "https://github.com/Gaurav06120714", icon: "github", handle: "Gaurav06120714" },
   { name: "LinkedIn", url: "https://www.linkedin.com/in/teegulla-gaurav-ganesh-6882b2380/", icon: "linkedin" },
-  { name: "LeetCode", url: "https://leetcode.com/u/gauravganesh/", icon: "code" },
+  { name: "LeetCode", url: "https://leetcode.com/u/gauravganesh/", icon: "leetcode", handle: "gauravganesh" },
+  { name: "HackerRank", url: "https://www.hackerrank.com/profile/gannu1214", icon: "hackerrank", handle: "gannu1214" },
   { name: "Instagram", url: "https://www.instagram.com/gaurav_1207_", icon: "instagram" },
-  { name: "HackerRank", url: "https://www.hackerrank.com/profile/gannu1214", icon: "terminal" },
 ];
 
-export const skills = {
-  "Languages": ["TypeScript", "JavaScript", "Python", "Rust", "Swift", "Dart", "C", "C++", "C#", "Java", "SQL", "x86 Assembly"],
-  "Frontend": ["Next.js 15/16 (App Router)", "React 19", "Tailwind CSS 4", "TanStack Query", "Flutter", "SwiftUI"],
-  "Backend": ["Node.js 20", "Express 5", "Prisma", "Drizzle ORM", "Zod", "Socket.IO", "BullMQ", "FastAPI", "JWT auth"],
-  "AI / ML": ["Ollama (local LLMs)", "Whisper / mlx-whisper", "Intent classification + slot-filling", "ArcFace face embeddings", "OpenCV", "MediaPipe", "scikit-learn", "Pandas"],
-  "Data": ["PostgreSQL 16", "Redis 7", "SQLite", "Row-Level Security"],
-  "Systems & Mobile": ["Rust (UniFFI, Pigeon interop)", "BLE", "E2EE (vodozemac / Olm)", "macOS Accessibility APIs", "Core ML", "QEMU", "x86_64 cross-GCC"],
-  "DevOps": ["Docker", "Render", "Netlify", "pnpm monorepos", "GitHub Actions", "Git"],
-};
-
-export const education = [
+export const featuredProjects: FeaturedProject[] = [
   {
-    degree: "B.Tech in Computer Science (Data Science)",
-    institution: "Sreenidhi Institute of Science and Technology",
-    location: "Hyderabad, India",
-    duration: "2022 – 2026",
-    cgpa: "8.6",
+    title: "VyroBrowser",
+    summary: "Desktop browser with a local AI assistant.",
+    description:
+      "A desktop browser built with Electron, React, TypeScript and Tailwind CSS that explores modern browsing features alongside local AI. The assistant runs through Ollama on the user’s own machine, so prompts aren’t sent to a cloud service.",
     highlights: [
-      "Specialization in Data Science and Machine Learning",
-      "Built multiple full-stack and AI/ML projects during coursework",
-      "Active competitive programmer on LeetCode, Codeforces, and CodeChef",
+      "Tabs, command palette, reader mode, bookmarks, history and downloads",
+      "Network-level ad-blocking with a per-site toggle",
+      "Context isolation and an IPC allowlist between the UI and Node.js",
+      "Installers for macOS, Windows and Linux on GitHub Releases (not yet code-signed)",
     ],
+    tech: ["Electron", "React", "TypeScript", "Tailwind CSS", "Vite", "Ollama"],
+    github: "https://github.com/Gaurav06120714/VyroBrowser",
+    links: [{ label: "Releases", url: "https://github.com/Gaurav06120714/VyroBrowser/releases" }],
+  },
+  {
+    title: "VyroLink",
+    summary: "Offline-first, end-to-end encrypted messaging.",
+    description:
+      "An offline-first messaging app that sends end-to-end encrypted messages phone to phone over Bluetooth — no internet or servers. When the recipient is out of range, nearby devices can relay a message they cannot read. Built on a Rust core with Swift and Kotlin native layers; Wi-Fi Aware is being explored as an additional transport.",
+    highlights: [
+      "Store-and-forward relaying between nearby devices",
+      "Rust core with an automated test suite, including malicious-relay tests",
+      "Tested on the iOS simulator and Android emulator — real-device Bluetooth testing is still to come",
+    ],
+    tech: ["Rust", "Swift", "Kotlin", "Flutter", "Bluetooth LE", "Wi-Fi Aware", "E2E encryption"],
+    status: "In development",
+    github: "https://github.com/Gaurav06120714/vyrolink",
+    links: [{ label: "Website", url: "https://vyrolink.netlify.app" }],
+    image: "/projects/vyrolink.png",
+    imageAlt: "VyroLink project website showing a message delivery timeline on a phone",
+  },
+  {
+    title: "Ksheera Setu",
+    summary: "AI-assisted bovine mastitis forecasting and monitoring.",
+    description:
+      "A project that uses sensor data and machine learning to help forecast and monitor bovine mastitis, an udder infection in dairy cattle.",
+    tech: ["Machine Learning", "Sensor Data", "Forecasting"],
+  },
+  {
+    title: "SafeRoute",
+    summary: "Women’s safety application.",
+    description:
+      "A women’s safety application with its own backend and an administrative dashboard, built with FastAPI and related technologies.",
+    tech: ["Python", "FastAPI", "Admin Dashboard"],
+  },
+  {
+    title: "ATTENDO",
+    summary: "Smart attendance system.",
+    description:
+      "A smart attendance-system project exploring several ways to verify check-ins: dynamic QR codes, facial recognition, device authentication and Wi-Fi verification.",
+    tech: ["Dynamic QR Codes", "Facial Recognition", "Device Authentication", "Wi-Fi Verification"],
   },
 ];
 
-export const experience = [
+export const otherProjects: OtherProject[] = [
   {
-    company: "SkillCraft Technology",
-    title: "Data Science Intern",
-    url: "#",
-    duration: "2024",
-    bullets: [
-      "Completed 4 structured data science tasks covering population analytics, Titanic survival EDA, Decision Tree classification, and US road accident pattern analysis.",
-      "Built comprehensive data visualizations and analytical reports using Python, Pandas, Matplotlib, and Seaborn across multiple real-world datasets.",
-      "Applied ML algorithms including Decision Tree classifiers on the UCI Bank Marketing Dataset to predict customer subscription behavior with measurable accuracy.",
-      "Delivered all tasks with clean, well-documented code and insightful visual reports.",
-    ],
-  },
-];
-
-export const featuredProjects = [
-  {
-    id: 1,
-    overline: "Featured Project",
     title: "CodeVault",
     description:
-      "One dashboard for all your competitive-programming platforms. It automatically publishes accepted solutions to a clean, searchable GitHub repo. Monorepo: Next.js 16 frontend, Express 5 + Prisma backend, a git-sync engine (BullMQ + node-cron) that started as a separate service and is now folded into the backend, an admin console with owner-only Google sign-in, a browser extension and a mobile app. PostgreSQL + Redis, Row-Level Security policies, JWT shared across services. Built by a 2-person team — I owned git-sync, the extension, mobile and contests. Was deployed on Render as 4 Docker services; now runs locally.",
-    tech: ["Next.js", "TypeScript", "Express", "Prisma", "PostgreSQL", "Redis", "BullMQ", "Docker"],
+      "One dashboard for competitive-programming platforms that publishes accepted solutions to a searchable GitHub repo. Next.js + Express + Prisma monorepo with a browser extension and mobile app; built by a 2-person team.",
+    tech: ["Next.js", "TypeScript", "Express", "PostgreSQL", "Redis"],
     github: "https://github.com/Gaurav06120714/CodeVault",
-    external: null,
-    image: "/projects/codevault.png",
   },
   {
-    id: 2,
-    overline: "Featured Project",
-    title: "VYRO LINK",
-    description:
-      "Offline, end-to-end encrypted, store-and-forward messenger over Bluetooth LE — no internet or servers needed. Rust core (151 tests, including a malicious-relay security suite) bridged to a Flutter app through UniFFI + Pigeon native hosts. 1:1 and small-group chat, attachments, QR / 32-char ID pairing, key refresh on re-pair, panic wipe, app lock and an Android relay mode. End-to-end tests pass on the iOS simulator and Android emulator; testing on real BLE devices is still to come.",
-    tech: ["Rust", "Flutter", "Dart", "Swift", "Kotlin", "UniFFI", "BLE", "E2EE"],
-    github: "https://github.com/Gaurav06120714/vyrolink",
-    external: "https://vyrolink.netlify.app",
-    image: "/projects/vyrolink.png",
-  },
-  {
-    id: 3,
-    overline: "Featured Project",
     title: "VyroOS",
     description:
-      "A from-scratch x86_64 microkernel OS in C + Assembly with a GUI, a framebuffer driver and a networking stack (TCP, DNS). It has a hand-written TLS 1.3 client — X25519, ChaCha20-Poly1305 and AES-128-GCM, all checked against RFC/NIST test vectors at boot — so its built-in browser loads real HTTPS pages. Runs in QEMU.",
-    tech: ["C", "x86 Assembly", "NASM", "GCC cross-toolchain", "QEMU"],
+      "A from-scratch x86_64 OS in C and Assembly with a GUI, a networking stack and a hand-written TLS 1.3 client. Runs in QEMU.",
+    tech: ["C", "x86 Assembly", "NASM", "QEMU"],
     github: "https://github.com/Gaurav06120714/VyroOS",
-    external: null,
-    image: "/projects/vyroos.png",
   },
-];
-
-export const otherProjects = [
   {
     title: "ClubAI",
     description:
-      "AI operations platform for a student club. pnpm monorepo: Next.js admin dashboard, Express API, Drizzle/Postgres (14 tables). SMS messaging, an AI intent pipeline that confirms event attendance from free-text replies, conversational project-info collection, BullMQ reminder/follow-up automation, a mock AI voice-calling engine and an analytics dashboard. 40+ tests.",
-    tech: ["Next.js", "Express", "Drizzle", "PostgreSQL", "Redis", "BullMQ", "Ollama"],
-    github: null,
-    external: null,
+      "AI operations platform for a student club: Next.js admin dashboard, Express API, SMS messaging and an intent pipeline that confirms event attendance from free-text replies. 40+ tests.",
+    tech: ["Next.js", "Express", "Drizzle", "PostgreSQL", "Ollama"],
+  },
+  {
+    title: "ExamShield",
+    description:
+      "Offline evaluator for handwritten answer sheets. I owned ingestion, TrOCR handwriting OCR and question segmentation in a 3-person team.",
+    tech: ["Python", "PyTorch", "TrOCR", "FastAPI"],
   },
   {
     title: "Shift",
     description:
-      "Native macOS menu-bar utility that copies any text you highlight automatically (no ⌘C) and shows a floating \"Copied\" badge. Works across apps using the macOS Accessibility APIs.",
-    tech: ["Swift", "SwiftUI", "AppKit", "Accessibility API"],
-    github: null,
-    external: null,
+      "macOS menu-bar utility that copies highlighted text automatically, using the macOS Accessibility APIs.",
+    tech: ["Swift", "SwiftUI", "AppKit"],
   },
   {
-    title: "FaceLock (in progress)",
+    title: "FaceLock",
     description:
-      "Windows face-unlock app. Face matching and 5-cue liveness logic are done in C#/.NET 8; the Windows Credential Provider login integration is still being built.",
-    tech: ["C#", ".NET 8", "ONNX", "WinUI 3"],
-    github: null,
-    external: null,
-  },
-  {
-    title: "ExamShield (E-Shield)",
-    description:
-      "Offline AI evaluator for handwritten answer sheets: learns from previously corrected scripts, then gives question-wise marks and feedback. I owned ingestion, TrOCR handwriting OCR with confidence scoring, question segmentation and the upload UI in a 3-person team.",
-    tech: ["Python", "PyTorch", "TrOCR", "XGBoost", "FastAPI", "Next.js"],
-    github: null,
-    external: null,
-  },
-  {
-    title: "IPL Fantasy Auction",
-    description:
-      "Real-time multiplayer IPL auction platform. Up to 7 players bid on 100 IPL players with live countdown timers, room management, and PowerScore ranking algorithm.",
-    tech: ["React", "Node.js", "TypeScript", "PostgreSQL", "Socket.io"],
-    github: "https://github.com/Gaurav06120714/IPL-Auction",
-    external: null,
-  },
-  {
-    title: "AI Sign Language Recognition",
-    description:
-      "Real-time hand gesture recognition system that translates sign language into readable text using computer vision — helping hearing and speech-impaired individuals communicate.",
-    tech: ["Python", "OpenCV", "Machine Learning", "MediaPipe"],
-    github: "https://github.com/Gaurav06120714/AI-Sign-Language-Recognition-System",
-    external: null,
+      "Windows face-unlock app. Face matching and liveness checks are done in C#/.NET 8; the Windows login integration is still being built.",
+    tech: ["C#", ".NET 8", "ONNX"],
+    status: "In progress",
   },
   {
     title: "VyroAgent",
     description:
-      "Local AI voice agent for macOS — speak commands to control your Mac. Whisper STT + Ollama LLM, 25 system actions, zero API keys, 100% offline.",
-    tech: ["Python", "Whisper", "Ollama", "LLM"],
+      "Local voice agent for macOS: Whisper speech-to-text and an Ollama LLM mapped to system actions, fully offline.",
+    tech: ["Python", "Whisper", "Ollama"],
     github: "https://github.com/Gaurav06120714/VyroAgent",
-    external: null,
+  },
+  {
+    title: "AI Sign Language Recognition",
+    description:
+      "Real-time hand-gesture recognition that converts sign language into readable text using computer vision.",
+    tech: ["Python", "OpenCV", "MediaPipe"],
+    github: "https://github.com/Gaurav06120714/AI-Sign-Language-Recognition-System",
+  },
+  {
+    title: "IPL Fantasy Auction",
+    description:
+      "Real-time multiplayer IPL auction: up to 7 players bid on 100 players with live timers and room management.",
+    tech: ["React", "Node.js", "Socket.io", "PostgreSQL"],
+    github: "https://github.com/Gaurav06120714/IPL-Auction",
   },
   {
     title: "GitHubDashboard",
     description:
-      "Native macOS dashboard to track GitHub contributions, streaks, and activity with one-click repo creation. Built natively with Swift and SwiftUI.",
+      "Native macOS dashboard for GitHub contributions, streaks and activity, with one-click repo creation.",
     tech: ["Swift", "SwiftUI", "GitHub API"],
     github: "https://github.com/Gaurav06120714/GitHubDashboard",
-    external: null,
   },
   {
     title: "VyroCoding",
     description:
-      "Competitive coding platform with shared real-time coding rooms, an AI interviewer that gives feedback, code execution in 7 languages, live contests, a leaderboard and a LeetCode-style problem library.",
-    tech: ["Next.js", "TypeScript", "Node.js", "WebSockets", "Docker"],
+      "Coding platform with shared real-time rooms, code execution in 7 languages, contests and a problem library.",
+    tech: ["Next.js", "TypeScript", "WebSockets"],
     github: "https://github.com/Gaurav06120714/VyroCoding",
-    external: null,
   },
   {
     title: "VyroMusic",
-    description:
-      "Spotify-inspired music platform with AI-powered recommendations, fast search, a dark neon UI and a no-account mode with 50 handpicked tracks.",
-    tech: ["TypeScript", "React", "Tailwind CSS", "Node.js"],
+    description: "Music web app with search, playlists and recommendations.",
+    tech: ["React", "TypeScript", "Node.js"],
     github: "https://github.com/Gaurav06120714/VyroMusic",
-    external: null,
   },
   {
     title: "VyroPortify",
     description:
-      "AI-powered portfolio generator — upload a resume and it writes the copy, picks a layout and deploys a hosted portfolio site.",
-    tech: ["Next.js", "FastAPI", "Python", "AI/LLM"],
+      "Portfolio generator: upload a resume and it drafts the copy, picks a layout and deploys a site.",
+    tech: ["Next.js", "FastAPI", "Python"],
     github: "https://github.com/Gaurav06120714/VyroPortify",
-    external: null,
+  },
+];
+
+export const skills: Record<string, string[]> = {
+  Languages: ["TypeScript", "JavaScript", "Python", "Rust", "Swift", "Kotlin", "Dart", "C", "C++", "C#", "Java", "SQL"],
+  "Frontend & Desktop": ["React", "Next.js", "Tailwind CSS", "Electron", "Flutter", "SwiftUI"],
+  Backend: ["Node.js", "Express", "FastAPI", "Prisma", "Socket.IO", "BullMQ", "REST APIs", "JWT auth"],
+  "AI / ML & Data": ["scikit-learn", "Pandas", "OpenCV", "MediaPipe", "PyTorch", "Ollama", "Whisper"],
+  Databases: ["PostgreSQL", "Redis", "SQLite"],
+  "Tools & DevOps": ["Git", "GitHub Actions", "Docker", "Netlify", "Render", "QEMU"],
+};
+
+export const experience: Experience[] = [
+  {
+    company: "SkillCraft Technology",
+    title: "Data Science Intern",
+    duration: "2024",
+    bullets: [
+      "Completed 4 data science tasks: population analytics, Titanic survival EDA, Decision Tree classification and US road-accident pattern analysis.",
+      "Built visualisations and analytical reports with Python, Pandas, Matplotlib and Seaborn on real-world datasets.",
+      "Trained a Decision Tree classifier on the UCI Bank Marketing dataset to predict customer subscription.",
+    ],
+  },
+];
+
+export const education = [
+  {
+    degree: "B.Tech in Computer Science and Engineering (Data Science)",
+    institution: "Sreenidhi Institute of Science and Technology",
+    location: "Hyderabad, India",
+    duration: "2022 – 2026",
+    cgpa: "8.6",
   },
 ];
 
 export const certifications = [
-  {
-    title: "C and C++ Programming Certification",
-    issuer: "Coursera",
-    year: "2024",
-    url: "#",
-  },
-  {
-    title: "Python Programming Certification",
-    issuer: "Udemy",
-    year: "2025",
-    url: "#",
-  },
-  {
-    title: "Python for Data Science / Programming",
-    issuer: "NPTEL",
-    year: "2026",
-    url: "#",
-  },
+  { title: "Python for Data Science / Programming", issuer: "NPTEL", year: "2026" },
+  { title: "Python Programming", issuer: "Udemy", year: "2025" },
+  { title: "C and C++ Programming", issuer: "Coursera", year: "2024" },
 ];
 
 export const achievements = [
   "Built VyroOS, an x86_64 OS from scratch with its own TLS 1.3 stack that loads real HTTPS websites",
-  "Built VYRO LINK, an offline E2EE Bluetooth messenger with a Rust core and 150+ automated tests",
+  "Built VyroLink, an offline end-to-end encrypted Bluetooth messenger with a Rust core and 150+ automated tests",
   "Co-built CodeVault, a multi-service platform that syncs competitive-programming solutions to GitHub",
-  "Shipped 10+ projects across web, mobile, macOS, systems and AI",
   "Active on LeetCode (gauravganesh), Codeforces and HackerRank (gannu1214)",
-  "Data Science Intern at SkillCraft Technology",
 ];

@@ -1,30 +1,38 @@
-"use client";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface Props {
-  number: string;
+  /** Small label above the title, e.g. "02 — Work". */
+  eyebrow: string;
   title: string;
-  light?: boolean;
+  intro?: string;
+  dark?: boolean;
+  id?: string;
 }
 
-export default function SectionHeading({ number, title, light }: Props) {
+export default function SectionHeading({ eyebrow, title, intro, dark, id }: Props) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="flex items-center gap-4 mb-12"
-    >
-      <span className="font-mono text-sm text-violet-400 font-semibold">
-        {number}.
-      </span>
-      <h2
-        className="text-2xl md:text-3xl font-bold tracking-tight text-[var(--text-primary)]"
+    <header className="mb-12 md:mb-16">
+      <p
+        className={cn(
+          "mb-4 font-mono text-xs uppercase tracking-[0.2em]",
+          dark ? "text-neutral-400" : "text-neutral-500",
+        )}
       >
+        {eyebrow}
+      </p>
+      <h2 id={id} className="text-3xl font-semibold tracking-tight md:text-5xl">
         {title}
       </h2>
-      <div className="flex-1 h-px bg-gradient-to-r from-violet-500/40 to-transparent" />
-    </motion.div>
+      {intro && (
+        <p
+          className={cn(
+            "mt-5 max-w-2xl text-base leading-relaxed md:text-lg",
+            dark ? "text-neutral-300" : "text-neutral-600",
+          )}
+        >
+          {intro}
+        </p>
+      )}
+    </header>
   );
 }

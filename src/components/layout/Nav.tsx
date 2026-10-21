@@ -1,186 +1,140 @@
 "use client";
-import { useState, useEffect, useSyncExternalStore } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Moon, Sun, Menu, X, Download } from "lucide-react";
-import { useTheme } from "next-themes";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
+import { personalInfo } from "@/data/portfolio";
+import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "About", href: "#about", num: "01" },
-  { label: "Skills", href: "#skills", num: "02" },
-  { label: "Experience", href: "#experience", num: "03" },
-  { label: "Projects", href: "#projects", num: "04" },
-  { label: "Contact", href: "#contact", num: "05" },
+  { label: "About", href: "#about" },
+  { label: "Projects", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
-  const [lastY, setLastY] = useState(0);
-  const [hidden, setHidden] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  // true on the client, false during SSR — avoids a theme-icon hydration mismatch
-  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState("");
 
+  // Border once the page is scrolled.
   useEffect(() => {
-    const handleScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 50);
-      setHidden(y > lastY && y > 100);
-      setLastY(y);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastY]);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const handleNavClick = (href: string) => {
-    setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  // Highlight the section currently in view.
+  useEffect(() => {
+    // Includes the hero (#top) so nothing is highlighted while it's in view.
+    const sections = ["#top", ...navLinks.map((l) => l.href)]
+      .map((href) => document.querySelector<HTMLElement>(href))
+      .filter((el): el is HTMLElement => el !== null);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) setActive(e.target.id === "top" ? "" : `#${e.target.id}`);
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
+  // Mobile menu: close on Escape, lock page scroll while open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
-    <>
-      <motion.header
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: hidden ? -100 : 0, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "bg-[var(--bg-primary)]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-[var(--border)]"
-            : "bg-transparent"
-        }`}
+    <header
+      className={cn(
+        "fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-sm transition-[border-color] duration-200",
+        "border-b",
+        scrolled || open ? "border-neutral-200" : "border-transparent",
+      )}
+    >
+      <nav
+        aria-label="Primary"
+        className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8"
       >
-        <nav className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <motion.a
-            href="#"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2"
-          >
-            <div className="w-9 h-9 bg-violet-600 rounded-lg flex items-center justify-center text-white font-bold font-mono text-lg shadow-lg shadow-violet-500/30">
-              G
-            </div>
-          </motion.a>
+        <a href="#top" className="text-sm font-semibold tracking-tight" onClick={() => setOpen(false)}>
+          {personalInfo.shortName}
+        </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1">
-            <ol className="flex items-center gap-1">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="group px-3 py-2 text-sm font-medium text-[var(--text-secondary)] hover:text-violet-400 transition-colors duration-200"
-                  >
-                    <span className="font-mono text-violet-400 text-xs mr-1">{link.num}.</span>
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-            </ol>
-
-            {/* Theme toggle */}
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="ml-2 p-2 rounded-lg text-[var(--text-secondary)] hover:text-violet-400 hover:bg-violet-500/10 transition-all duration-200"
-                aria-label="Toggle theme"
+        <ul className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link) => (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                aria-current={active === link.href ? "true" : undefined}
+                className={cn(
+                  "text-sm transition-colors hover:text-black",
+                  active === link.href ? "text-black underline underline-offset-8" : "text-neutral-500",
+                )}
               >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-            )}
-
-            {/* Resume button */}
+                {link.label}
+              </a>
+            </li>
+          ))}
+          <li>
             <a
-              href="/resume.pdf"
-              download
-              className="ml-3 flex items-center gap-2 px-4 py-2 text-sm font-mono font-medium text-violet-400 border border-violet-400 rounded-lg hover:bg-violet-400/10 transition-all duration-200"
+              href={personalInfo.resumePath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-black bg-black px-4 py-2 text-sm text-white transition-colors hover:bg-white hover:text-black"
             >
-              <Download size={14} />
-              Resume
+              Résumé
             </a>
-          </div>
+          </li>
+        </ul>
 
-          {/* Mobile hamburger */}
-          <div className="md:hidden flex items-center gap-2">
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 text-[var(--text-secondary)] hover:text-violet-400 transition-colors"
-              >
-                {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
-            )}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 text-[var(--text-secondary)] hover:text-violet-400 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-        </nav>
-      </motion.header>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="-mr-2 p-2 md:hidden"
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </nav>
 
-      {/* Mobile drawer */}
-      <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
-            />
-            <motion.div
-              key="drawer"
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.25 }}
-              className="fixed right-0 top-0 h-full w-72 z-50 bg-[var(--bg-card)] border-l border-[var(--border)] shadow-2xl md:hidden flex flex-col"
-            >
-              <div className="flex justify-end p-5">
-                <button
-                  onClick={() => setMenuOpen(false)}
-                  className="p-2 text-[var(--text-secondary)] hover:text-violet-400"
+      {open && (
+        <div id="mobile-menu" className="h-[calc(100dvh-4rem)] overflow-y-auto bg-white px-5 pb-10 sm:px-8 md:hidden">
+          <ul className="flex flex-col border-t border-neutral-200">
+            {navLinks.map((link) => (
+              <li key={link.href} className="border-b border-neutral-200">
+                <a
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="block py-5 text-2xl font-medium tracking-tight"
                 >
-                  <X size={22} />
-                </button>
-              </div>
-              <nav className="flex flex-col items-center justify-center flex-1 gap-6 pb-16">
-                {navLinks.map((link, i) => (
-                  <motion.button
-                    key={link.href}
-                    initial={{ opacity: 0, x: 30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.07 }}
-                    onClick={() => handleNavClick(link.href)}
-                    className="flex flex-col items-center gap-1 text-[var(--text-primary)] hover:text-violet-400 transition-colors"
-                  >
-                    <span className="font-mono text-violet-400 text-xs">{link.num}.</span>
-                    <span className="text-lg font-semibold">{link.label}</span>
-                  </motion.button>
-                ))}
-                <motion.a
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                  href="/resume.pdf"
-                  download
-                  className="mt-4 flex items-center gap-2 px-6 py-3 text-sm font-mono text-violet-400 border border-violet-400 rounded-lg hover:bg-violet-400/10 transition-all"
-                >
-                  <Download size={14} />
-                  Resume
-                </motion.a>
-              </nav>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a
+            href={personalInfo.resumePath}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-block border border-black bg-black px-5 py-3 text-sm text-white"
+          >
+            View résumé
+          </a>
+        </div>
+      )}
+    </header>
   );
 }

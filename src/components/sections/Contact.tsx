@@ -1,255 +1,210 @@
 "use client";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Send, Mail, Phone, MapPin, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowUpRight, Loader2 } from "lucide-react";
+import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import AnimatedSection from "@/components/ui/AnimatedSection";
-import { personalInfo } from "@/data/portfolio";
-import { GithubIcon, LinkedInIcon } from "@/components/ui/SocialIcons";
+import { SocialIcon } from "@/components/ui/SocialIcons";
+import { personalInfo, socialLinks } from "@/data/portfolio";
+import { cn } from "@/lib/utils";
 
 type Status = "idle" | "sending" | "sent" | "error";
+type Field = "name" | "email" | "message";
+
+const MAX_MESSAGE = 1000;
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState<Record<Field, string>>({ name: "", email: "", message: "" });
+  const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const errors: Record<Field, string> = {
+    name: touched.name && !form.name.trim() ? "Please enter your name." : "",
+    email: touched.email && !isEmail(form.email) ? "Please enter a valid email address." : "",
+    message: touched.message && !form.message.trim() ? "Please write a message." : "",
   };
+  const isValid = form.name.trim() && isEmail(form.email) && form.message.trim();
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setTouched((prev) => ({ ...prev, [e.target.name]: true }));
-  };
+  const update = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const blur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setTouched((t) => ({ ...t, [e.target.name]: true }));
 
-  const isEmailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-
-  const errors = {
-    name:    touched.name    && !form.name.trim()          ? "Name is required"             : "",
-    email:   touched.email   && !isEmailValid(form.email)  ? "Valid email is required"      : "",
-    message: touched.message && !form.message.trim()       ? "Message cannot be empty"      : "",
-  };
-
-  const isValid = form.name.trim() && isEmailValid(form.email) && form.message.trim();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    // Touch all fields to show errors
     setTouched({ name: true, email: true, message: true });
     if (!isValid) return;
 
     setStatus("sending");
     setErrorMsg("");
-
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to send message.");
-      }
-
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(data.error || "The message couldn’t be sent.");
       setStatus("sent");
       setForm({ name: "", email: "", message: "" });
       setTouched({});
-      setTimeout(() => setStatus("idle"), 8000);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Something went wrong.";
+    } catch (err) {
       setStatus("error");
-      setErrorMsg(message + " — or email me directly at " + personalInfo.email);
-      setTimeout(() => setStatus("idle"), 10000);
+      setErrorMsg(err instanceof Error ? err.message : "The message couldn’t be sent.");
     }
-  };
+  }
 
-  const inputClass = (field: string) =>
-    `w-full px-4 py-3 bg-[var(--bg-primary)] border rounded-xl text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-1 transition-all disabled:opacity-50 ${
-      errors[field as keyof typeof errors]
-        ? "border-red-500/60 focus:border-red-500 focus:ring-red-500/20"
-        : "border-[var(--border)] focus:border-violet-500 focus:ring-violet-500/20"
-    }`;
+  const inputClass = (field: Field) =>
+    cn(
+      "w-full border bg-black px-4 py-3 text-sm text-white placeholder:text-neutral-500",
+      "focus:border-white focus:outline-none disabled:opacity-50",
+      errors[field] ? "border-white" : "border-neutral-700",
+    );
 
   return (
-    <AnimatedSection id="contact" className="py-28 px-6 max-w-6xl mx-auto">
-      <SectionHeading number="07" title="Get In Touch" />
+    <Section id="contact" dark labelledBy="contact-title">
+      <SectionHeading
+        eyebrow="07 — Contact"
+        title="Let’s work together"
+        id="contact-title"
+        dark
+        intro={`${personalInfo.availability} The quickest way to reach me is email.`}
+      />
 
-      <div className="grid lg:grid-cols-2 gap-16 max-w-5xl">
+      <div className="grid gap-16 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <a
+            href={`mailto:${personalInfo.email}`}
+            className="link block break-all text-xl font-medium md:text-2xl"
+          >
+            {personalInfo.email}
+          </a>
 
-        {/* ── Left — info ── */}
-        <div>
-          <p className="font-mono text-violet-400 text-xs tracking-[0.25em] uppercase mb-3">
-            What&apos;s Next?
-          </p>
-          <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)] mb-6 leading-tight">
-            Let&apos;s Build Something{" "}
-            <span className="text-violet-400">Together.</span>
-          </h3>
-          <p className="text-[var(--text-secondary)] leading-relaxed mb-8 text-base">
-            I&apos;m currently open to new opportunities — whether it&apos;s a full-time role,
-            internship, freelance project, or a great idea you&apos;d like to build together.
-            My inbox is always open!
-          </p>
+          <dl className="mt-10 divide-y divide-neutral-800 border-y border-neutral-800 text-sm">
+            <div className="flex justify-between gap-4 py-4">
+              <dt className="text-neutral-400">Phone</dt>
+              <dd>
+                <a href={`tel:${personalInfo.phone.replace(/\s/g, "")}`} className="link">
+                  {personalInfo.phone}
+                </a>
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4 py-4">
+              <dt className="text-neutral-400">Location</dt>
+              <dd>{personalInfo.location}</dd>
+            </div>
+          </dl>
 
-          {/* Contact details */}
-          <div className="space-y-3 mb-8">
-            {[
-              { icon: Mail,  label: "Email",    text: personalInfo.email,    href: `mailto:${personalInfo.email}` },
-              { icon: Phone, label: "Phone",    text: personalInfo.phone,    href: `tel:${personalInfo.phone}`    },
-              { icon: MapPin,label: "Location", text: personalInfo.location, href: null                           },
-            ].map(({ icon: Icon, label, text, href }) => (
-              <div key={label} className="flex items-center gap-3 group">
-                <div className="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center flex-shrink-0 group-hover:bg-violet-500/20 transition-colors">
-                  <Icon size={15} className="text-violet-400" />
-                </div>
-                {href ? (
-                  <a href={href} className="text-sm text-[var(--text-secondary)] hover:text-violet-400 transition-colors break-all">
-                    {text}
-                  </a>
-                ) : (
-                  <span className="text-sm text-[var(--text-secondary)]">{text}</span>
-                )}
-              </div>
+          <ul className="mt-10 space-y-3">
+            {socialLinks.map((s) => (
+              <li key={s.name}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between border-b border-neutral-800 pb-3 text-sm"
+                >
+                  <span className="flex items-center gap-3">
+                    <SocialIcon name={s.icon} size={16} />
+                    {s.name}
+                    {s.handle && <span className="text-neutral-500">{s.handle}</span>}
+                  </span>
+                  <ArrowUpRight size={16} aria-hidden="true" className="text-neutral-500 transition-colors group-hover:text-white" />
+                </a>
+              </li>
             ))}
-          </div>
-
-          {/* Social buttons */}
-          <div className="flex gap-3 flex-wrap">
-            {[
-              { href: "https://github.com/Gaurav06120714",                             label: "GitHub",   icon: <GithubIcon size={15} />   },
-              { href: "https://www.linkedin.com/in/teegulla-gaurav-ganesh-6882b2380/", label: "LinkedIn", icon: <LinkedInIcon size={15} /> },
-            ].map((s) => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl text-sm text-[var(--text-secondary)] hover:text-violet-400 hover:border-violet-500/50 transition-all duration-200"
-              >
-                {s.icon}
-                {s.label}
-              </a>
-            ))}
-          </div>
+          </ul>
         </div>
 
-        {/* ── Right — form ── */}
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          noValidate
-          className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 md:p-8 space-y-5 hover:border-violet-500/20 transition-colors"
-        >
-          {/* Name + Email row */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              { name: "name",  label: "Name",  type: "text",  placeholder: "Your full name" },
-              { name: "email", label: "Email", type: "email", placeholder: "your@email.com" },
-            ].map((f) => (
+        <form onSubmit={submit} noValidate className="space-y-6 lg:col-span-7" aria-describedby="form-status">
+          <div className="grid gap-6 sm:grid-cols-2">
+            {(
+              [
+                { name: "name", label: "Name", type: "text", autoComplete: "name", placeholder: "Your name" },
+                { name: "email", label: "Email", type: "email", autoComplete: "email", placeholder: "you@example.com" },
+              ] as const
+            ).map((f) => (
               <div key={f.name}>
-                <label className="block text-xs font-mono text-[var(--text-muted)] mb-1.5 uppercase tracking-wider">
-                  {f.label} <span className="text-violet-400">*</span>
+                <label htmlFor={`contact-${f.name}`} className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-neutral-400">
+                  {f.label}
                 </label>
                 <input
-                  type={f.type}
+                  id={`contact-${f.name}`}
                   name={f.name}
-                  value={form[f.name as keyof typeof form]}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  type={f.type}
+                  autoComplete={f.autoComplete}
                   placeholder={f.placeholder}
+                  value={form[f.name]}
+                  onChange={update}
+                  onBlur={blur}
+                  required
+                  maxLength={f.name === "name" ? 100 : 200}
                   disabled={status === "sending"}
+                  aria-invalid={Boolean(errors[f.name])}
+                  aria-describedby={errors[f.name] ? `contact-${f.name}-error` : undefined}
                   className={inputClass(f.name)}
                 />
-                {errors[f.name as keyof typeof errors] && (
-                  <p className="text-red-400 text-xs mt-1 font-mono">
-                    {errors[f.name as keyof typeof errors]}
+                {errors[f.name] && (
+                  <p id={`contact-${f.name}-error`} className="mt-2 text-xs text-neutral-300">
+                    {errors[f.name]}
                   </p>
                 )}
               </div>
             ))}
           </div>
 
-          {/* Message */}
           <div>
-            <label className="block text-xs font-mono text-[var(--text-muted)] mb-1.5 uppercase tracking-wider">
-              Message <span className="text-violet-400">*</span>
+            <label htmlFor="contact-message" className="mb-2 block font-mono text-xs uppercase tracking-[0.15em] text-neutral-400">
+              Message
             </label>
             <textarea
+              id="contact-message"
               name="message"
               rows={6}
+              placeholder="Tell me about the role, project or idea."
               value={form.message}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              placeholder="Tell me about your project, opportunity, or just say hi..."
+              onChange={update}
+              onBlur={blur}
+              required
+              maxLength={MAX_MESSAGE}
               disabled={status === "sending"}
-              className={`${inputClass("message")} resize-none`}
+              aria-invalid={Boolean(errors.message)}
+              aria-describedby={errors.message ? "contact-message-error" : "contact-message-count"}
+              className={cn(inputClass("message"), "resize-y")}
             />
-            <div className="flex justify-between items-center mt-1">
-              {errors.message ? (
-                <p className="text-red-400 text-xs font-mono">{errors.message}</p>
-              ) : <span />}
-              <span className={`text-xs font-mono ${form.message.length > 800 ? "text-orange-400" : "text-[var(--text-muted)]"}`}>
-                {form.message.length}/1000
+            <div className="mt-2 flex justify-between gap-4 text-xs text-neutral-400">
+              <span id="contact-message-error">{errors.message}</span>
+              <span id="contact-message-count">
+                {form.message.length}/{MAX_MESSAGE}
               </span>
             </div>
           </div>
 
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={status === "sending" || status === "sent"}
-            className="w-full flex items-center justify-center gap-2.5 px-6 py-4 bg-violet-600 hover:bg-violet-500 disabled:opacity-70 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:-translate-y-0.5 disabled:hover:translate-y-0 text-sm cursor-pointer disabled:cursor-not-allowed"
-          >
-            {status === "sending" ? (
-              <><Loader2 size={16} className="animate-spin" /> Sending your message...</>
-            ) : status === "sent" ? (
-              <><CheckCircle size={16} /> Message Sent Successfully!</>
-            ) : (
-              <><Send size={16} /> Send Message</>
-            )}
-          </button>
-
-          {/* Success / Error banners */}
-          <AnimatePresence>
-            {status === "sent" && (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                className="flex items-start gap-3 p-4 bg-green-500/10 border border-green-500/25 rounded-xl"
-              >
-                <CheckCircle size={16} className="text-green-400 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-green-300">Message delivered! 🚀</p>
-                  <p className="text-xs text-green-400/70 mt-0.5">
-                    I&apos;ll get back to you at <strong>{personalInfo.email}</strong> as soon as possible.
-                  </p>
-                </div>
-              </motion.div>
-            )}
-            {status === "error" && (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/25 rounded-xl"
-              >
-                <AlertCircle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-300">{errorMsg}</p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.form>
+          <div className="flex flex-wrap items-center gap-5">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="inline-flex items-center gap-2 border border-white bg-white px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {status === "sending" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
+              {status === "sending" ? "Sending…" : "Send message"}
+            </button>
+            <p id="form-status" role="status" aria-live="polite" className="text-sm text-neutral-300">
+              {status === "sent" && "Thanks — your message was sent. I’ll reply by email."}
+              {status === "error" && (
+                <>
+                  {errorMsg} You can also email me at{" "}
+                  <a href={`mailto:${personalInfo.email}`} className="link">
+                    {personalInfo.email}
+                  </a>
+                  .
+                </>
+              )}
+            </p>
+          </div>
+        </form>
       </div>
-    </AnimatedSection>
+    </Section>
   );
 }

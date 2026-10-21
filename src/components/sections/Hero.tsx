@@ -1,116 +1,73 @@
-"use client";
-import { motion, Variants } from "framer-motion";
-import { ArrowRight, Download } from "lucide-react";
-import { personalInfo } from "@/data/portfolio";
-
-const variants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.12 + 0.3, duration: 0.5, ease: "easeOut" },
-  }),
-};
+import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { personalInfo, socialLinks } from "@/data/portfolio";
+import { SocialIcon } from "@/components/ui/SocialIcons";
+import Reveal from "@/components/ui/AnimatedSection";
 
 export default function Hero() {
   return (
-    <section
-      id="hero"
-      className="min-h-screen flex items-center px-6 max-w-6xl mx-auto pt-20"
-    >
-      <div className="w-full">
-        <motion.p
-          custom={0}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="font-mono text-violet-400 text-sm md:text-base mb-4 tracking-widest"
-        >
-          Hi, my name is
-        </motion.p>
+    <section id="top" aria-label="Introduction" className="bg-white">
+      <div className="mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-center px-5 pb-16 pt-28 sm:px-8">
+        <Reveal>
+          <ul className="mb-8 flex flex-wrap gap-x-3 gap-y-2 font-mono text-xs uppercase tracking-[0.18em] text-neutral-500">
+            {personalInfo.roles.map((role, i) => (
+              <li key={role} className="flex items-center gap-3">
+                {i > 0 && <span aria-hidden="true">/</span>}
+                {role}
+              </li>
+            ))}
+          </ul>
 
-        <motion.h1
-          custom={1}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[var(--text-primary)] leading-none mb-3"
-        >
-          {personalInfo.name.split(" ")[0]}{" "}
-          <span className="text-[var(--text-secondary)]">
-            {personalInfo.name.split(" ").slice(1).join(" ")}.
-          </span>
-        </motion.h1>
+          <h1 className="max-w-4xl text-[2.75rem] font-semibold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+            {personalInfo.name}
+          </h1>
 
-        <motion.h2
-          custom={2}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--text-muted)] leading-none mb-8"
-        >
-          {personalInfo.tagline}
-        </motion.h2>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-neutral-600 md:text-xl">
+            {personalInfo.intro}
+          </p>
+        </Reveal>
 
-        <motion.p
-          custom={3}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="max-w-xl text-[var(--text-secondary)] text-base md:text-lg leading-relaxed mb-10"
-        >
-          I&apos;m a Computer Science undergraduate specializing in{" "}
-          <span className="text-violet-400 font-medium">Data Science</span> — passionate about building
-          full-stack platforms, Rust + Flutter mobile apps, systems software and AI pipelines. From an OS
-          with its own TLS stack to an offline encrypted Bluetooth messenger, I turn ambitious ideas into
-          working products.
-        </motion.p>
+        <Reveal delay={0.1}>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <a
+              href="#projects"
+              className="inline-flex items-center gap-2 border border-black bg-black px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white hover:text-black"
+            >
+              View projects <ArrowDown size={16} aria-hidden="true" />
+            </a>
+            <a
+              href={personalInfo.resumePath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-black px-6 py-3 text-sm font-medium transition-colors hover:bg-black hover:text-white"
+            >
+              Résumé <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+            <a
+              href="#contact"
+              className="link ml-1 px-2 py-3 text-sm font-medium"
+            >
+              Get in touch
+            </a>
+          </div>
 
-        <motion.div
-          custom={4}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="flex flex-wrap gap-4"
-        >
-          <a
-            href="#projects"
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="group flex items-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-500 text-white font-medium rounded-lg transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:-translate-y-0.5"
-          >
-            View My Work
-            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a
-            href="/resume.pdf"
-            download
-            className="flex items-center gap-2 px-6 py-3 border border-violet-400 text-violet-400 font-medium rounded-lg hover:bg-violet-400/10 transition-all duration-200 hover:-translate-y-0.5"
-          >
-            <Download size={16} />
-            Download CV
-          </a>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          custom={5}
-          initial="hidden"
-          animate="show"
-          variants={variants}
-          className="mt-20 flex flex-col items-start gap-2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-1 ml-1"
-          >
-            <div className="w-px h-12 bg-gradient-to-b from-violet-400 to-transparent" />
-            <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
-          </motion.div>
-        </motion.div>
+          <ul className="mt-14 flex items-center gap-5 text-neutral-500" aria-label="Profiles">
+            {socialLinks
+              .filter((s) => s.icon !== "instagram")
+              .map((s) => (
+                <li key={s.name}>
+                  <a
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.name}
+                    className="block transition-colors hover:text-black"
+                  >
+                    <SocialIcon name={s.icon} size={20} />
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

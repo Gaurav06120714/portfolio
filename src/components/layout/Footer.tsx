@@ -1,47 +1,27 @@
-"use client";
-import { Terminal } from "lucide-react";
-import { GithubIcon, LinkedInIcon, InstagramIcon, LeetCodeIcon } from "@/components/ui/SocialIcons";
-import { socialLinks, personalInfo } from "@/data/portfolio";
-
-const iconMap: Record<string, React.ElementType> = {
-  github: GithubIcon,
-  linkedin: LinkedInIcon,
-  instagram: InstagramIcon,
-  code: LeetCodeIcon,
-  terminal: Terminal,
-};
+import { personalInfo, socialLinks } from "@/data/portfolio";
 
 export default function Footer() {
   return (
-    <footer className="py-8 px-6 flex flex-col items-center gap-4">
-      {/* Mobile social links */}
-      <div className="flex items-center gap-6 lg:hidden">
-        {socialLinks.map((link) => {
-          const Icon = iconMap[link.icon] ?? Terminal;
-          return (
-            <a
-              key={link.name}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={link.name}
-              className="text-[var(--text-muted)] hover:text-violet-400 transition-colors"
-            >
-              <Icon size={20} strokeWidth={1.5} />
+    <footer className="border-t border-neutral-800 bg-black text-white">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 text-sm sm:px-8 md:flex-row md:items-center md:justify-between">
+        <p className="text-neutral-400">
+          © {new Date().getFullYear()} {personalInfo.name}
+        </p>
+        <ul className="flex flex-wrap gap-x-6 gap-y-2">
+          {socialLinks.map((s) => (
+            <li key={s.name}>
+              <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-neutral-400 transition-colors hover:text-white">
+                {s.name}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="#top" className="text-neutral-400 transition-colors hover:text-white">
+              Back to top ↑
             </a>
-          );
-        })}
+          </li>
+        </ul>
       </div>
-
-      <a
-        href="https://github.com/Gaurav06120714"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-mono text-xs text-[var(--text-muted)] hover:text-violet-400 transition-colors text-center"
-      >
-        <span>Designed &amp; Built by </span>
-        <span className="text-violet-400">Gaurav Ganesh Teegulla</span>
-      </a>
     </footer>
   );
 }

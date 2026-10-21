@@ -1,16 +1,8 @@
 "use client";
-import { ThemeProvider } from "next-themes";
+import { MotionConfig } from "framer-motion";
 import { ReactNode } from "react";
 
+// Honour the visitor's "reduce motion" setting for every framer-motion animation.
 export default function Providers({ children }: { children: ReactNode }) {
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem={false}
-      disableTransitionOnChange={false}
-    >
-      {children}
-    </ThemeProvider>
-  );
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }
